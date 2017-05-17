@@ -1,6 +1,7 @@
 const createSpeaker = require('audio-speaker/direct');
 const createGenerator = require('audio-generator/direct');
 const Buffer = require('audio-buffer-utils')
+const Gibberish = require('gibberish-dsp')
 
 const buffer = Buffer.create(4096, 2, 44100)
 
@@ -14,6 +15,15 @@ function noise (buffer) {
 		data[1][i] = Math.random() - 0.5
 	}
   return buffer
+}
+
+function initGibberish () {
+  Gibberish.out = new Gibberish.Bus2();
+  Gibberish.out.codegen(); // make sure bus is first upvalue so that clearing works correctly
+  Gibberish.dirty(Gibberish.out);
+  Gibberish.context = {
+    sampleRate: SR
+  }
 }
 
 (function loop (err, buf) {
