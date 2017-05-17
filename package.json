@@ -1,0 +1,13 @@
+{
+  "name": "node-gibberish",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "audio-buffer-utils": "^4.3.2",
+    "audio-generator": "^2.1.2",
+    "audio-speaker": "^1.5.0",
+    "gibberish-dsp": "^2.5.0",
+    "speaker": "^0.3.0"
+  }
+}
