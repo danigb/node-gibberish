@@ -1,14 +1,14 @@
 const createSpeaker = require('audio-speaker/direct');
-const createGenerator = require('audio-generator/direct');
 const Buffer = require('audio-buffer-utils')
 const Gibberish = require('gibberish-dsp')
 
 const buffer = Buffer.create(4096, 2, 44100)
+const empty = Buffer.create(4096, 2, 44100)
 
 let output = createSpeaker();
-let generate = createGenerator(t => Math.sin(t * Math.PI * 2 * 440));
 
-function noise (buffer) {
+// example of how to use the buffers
+function stereoNoise (buffer) {
   const data = Buffer.data(buffer)
 	for (let i = 0; i < 4096; i++) {
 		data[0][i] = Math.random() - 0.5
@@ -21,11 +21,21 @@ function initGibberish () {
   Gibberish.out = new Gibberish.Bus2();
   Gibberish.out.codegen(); // make sure bus is first upvalue so that clearing works correctly
   Gibberish.dirty(Gibberish.out);
+  // mock AudioContext
   Gibberish.context = {
-    sampleRate: SR
+    sampleRate: 44100
   }
 }
 
-(function loop (err, buf) {
-	output(noise(buffer), loop);
-})();
+initGibberish()
+const pluck = new Gibberish.KarplusStrong({ damping: 0.6 }).connect();
+pluck.note(220);
+
+const e = { outputBuffer: buffer, inputBuffer: empty }
+
+function loop (err, buf) {
+  Gibberish.audioProcess(e)
+	output(buffer, loop);
+};
+
+loop()
